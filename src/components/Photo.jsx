@@ -25,10 +25,14 @@ import React from 'react';
       </div>
 */
 
-const Photo = () => {
+let genPhotoUrl = (photo) => {
+  return `https://farm${photo.farm}.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}.jpg`;
+}
+
+const Photo = ( {photo} ) => {
   return (
     <li>
-        <img src={"https://farm5.staticflickr.com/4343/37175099045_0d3a249629.jpg"} alt="" />
+        <img src={genPhotoUrl(photo)} alt={photo.title} />
     </li>
   );
 }

@@ -26,14 +26,32 @@ import Photo from './Photo'
       </div>
 */
 
-const PhotoList = () => {
+/*
+const PhotoList = ({ photos, title }) => {
   return (
-    <div class="photo-container">
-      <h2>Results</h2>
+    <div className="photo-container">
+      <h2>{title}</h2>
       <ul>
           <Photo />
           <Photo />
           <Photo />
+      </ul>
+    </div>
+  );
+}
+*/
+
+const PhotoList = ({ photos, title }) => {
+  console.log(photos)
+  return (
+    <div className="photo-container">
+      <h2>{title}</h2>
+      <ul>
+        {photos.map(photo => {
+          return(
+            <Photo key={photo.id} photo={photo} />
+          );
+        })}
       </ul>
     </div>
   );
