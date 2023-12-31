@@ -26,7 +26,7 @@ import React from 'react';
 */
 
 let genPhotoUrl = (photo) => {
-  return `https://farm${photo.farm}.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}.jpg`;
+  return `https://live.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}.jpg`;
 }
 
 const Photo = ( {photo} ) => {

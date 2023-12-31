@@ -10,8 +10,11 @@ import Nav from './components/Nav'
 import Search from './components/Search'
 import PhotoList from './components/PhotoList'
 
+//supporting code (move to separate file later
+
 //fetch data
 const fetchData = (query) => {
+  console.log(query)
   return fetch(query)
     .then(res => {
       return res.json().then((data) => {
@@ -23,34 +26,40 @@ const fetchData = (query) => {
     });
 }
 
-//supporting code (move to separate file later)
 const flickrQuery = (searchTerm) => {
   return `https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${searchTerm}&per_page=24&format=json&nojsoncallback=1`;
 }
 
 function App() {
-  const [photos, setPhotos] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchPhotos, setSearchPhotos] = useState([]);
   const [catPhotos, setCatPhotos] = useState([]);
   const [dogPhotos, setDogPhotos] = useState([]);
   const [computerPhotos, setCompPhotos] = useState([]);
 
+  //init all app data
   useEffect(() => {
-    //init all app data
-    fetchData(flickrQuery('cats')).then( result => {setCatPhotos(result);} );
-    fetchData(flickrQuery('dogs')).then( result => {setDogPhotos(result);} );
-    fetchData(flickrQuery('computers')).then( result => {setCompPhotos(result);} );
+    fetchData(flickrQuery('cat')).then( result => {setCatPhotos(result);} );
+    fetchData(flickrQuery('dog')).then( result => {setDogPhotos(result);} );
+    fetchData(flickrQuery('computer')).then( result => {setCompPhotos(result);} );
   }, []);
+
+  const getSearchResults = (query) => {
+    setSearchQuery(query);
+    fetchData(flickrQuery(query))
+      .then(result => { setSearchPhotos(result); });
+  }
 
   return (
     <div className="container">
       <Nav />
-      <Search />
+      <Search fetchData={fetchData} updateState={setSearchPhotos} flickrQuery={flickrQuery} />
       <Routes>
-        <Route path="/" element={<PhotoList photos={photos} title="home" />}/>
+        <Route path="/" element={<PhotoList photos={[]} title="home" />}/>
         <Route path="/cats" element={<PhotoList photos={catPhotos} title="cats" />} />
         <Route path="/dogs" element={<PhotoList photos={dogPhotos} title="dogs" />} />
         <Route path="/computers" element={<PhotoList photos={computerPhotos} title="computers" />} />
-        <Route path="/search/:query" element={<PhotoList photos='tbd' title="search" />} />
+        <Route path="/search/:query" element={<PhotoList photos={searchPhotos} title="search" search={getSearchResults} prevQuery={searchQuery} />} />
       </Routes>
     </div> 
   )
