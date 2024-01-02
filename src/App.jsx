@@ -9,16 +9,13 @@ import { Route, Routes } from 'react-router-dom'
 import Nav from './components/Nav'
 import Search from './components/Search'
 import PhotoList from './components/PhotoList'
-
-//supporting code (move to separate file later
+import PageNotFound from './components/PageNotFound'
 
 //fetch data
 const fetchData = (query) => {
-  console.log(query)
   return fetch(query)
     .then(res => {
       return res.json().then((data) => {
-        //console.log(data.photos.photo[0])
         return data.photos.photo;
       }).catch(err => {
         console.log("error fetching and parsing data", err)
@@ -31,6 +28,7 @@ const flickrQuery = (searchTerm) => {
 }
 
 function App() {
+  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchPhotos, setSearchPhotos] = useState([]);
   const [catPhotos, setCatPhotos] = useState([]);
@@ -44,22 +42,28 @@ function App() {
     fetchData(flickrQuery('computer')).then( result => {setCompPhotos(result);} );
   }, []);
 
+  //perform search
   const getSearchResults = (query) => {
+    setIsLoading(true);
     setSearchQuery(query);
     fetchData(flickrQuery(query))
-      .then(result => { setSearchPhotos(result); });
+      .then(result => { 
+        setSearchPhotos(result);
+        setIsLoading(false);
+      });
   }
 
   return (
     <div className="container">
       <Nav />
-      <Search fetchData={fetchData} updateState={setSearchPhotos} flickrQuery={flickrQuery} />
+      <Search fetchData={fetchData}/>
       <Routes>
         <Route path="/" element={<PhotoList photos={[]} title="home" />}/>
         <Route path="/cats" element={<PhotoList photos={catPhotos} title="cats" />} />
         <Route path="/dogs" element={<PhotoList photos={dogPhotos} title="dogs" />} />
         <Route path="/computers" element={<PhotoList photos={computerPhotos} title="computers" />} />
-        <Route path="/search/:query" element={<PhotoList photos={searchPhotos} title="search" search={getSearchResults} prevQuery={searchQuery} />} />
+        <Route path="/search/:query" element={<PhotoList photos={searchPhotos} title="search" search={getSearchResults} prevQuery={searchQuery} isLoading={isLoading}/>} />
+        <Route path="/*" element={<PageNotFound />} />
       </Routes>
     </div> 
   )

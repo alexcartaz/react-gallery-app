@@ -1,11 +1,15 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-//import { useParams } from 'react-router-dom';
 
-const Search = ({ fetchData, updateState, flickrQuery }) => {
+// search takes in fetchData only b/c this is a requirement on the instructions, I do not use that function here
+const Search = ({fetchData}) => {
     const search = useRef();
     let navigate = useNavigate();
 
+    // 1. event handler for search icon click and for user pressing enter/return
+    // 2. useRef captures seach query input from input element
+    // 3. when a form submission or on click event triggers search, all we do from this component is naviate to the correct route;
+    //    search will execute on route change
     const handleSubmit = (e) => {
         e.preventDefault();
         let query = search.current.value;
